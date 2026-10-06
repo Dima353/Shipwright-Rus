@@ -1,5 +1,11 @@
-#include <soh/OTRGlobals.h>
-#include "soh/Enhancements/randomizer/randomizer.h"
+#include <libultraship/bridge/consolevariablebridge.h>
+
+#include "soh/Enhancements/game-interactor/GameInteractor.h"
+#include "soh/Enhancements/custom-message/CustomMessageManager.h"
+#include "soh/Enhancements/custom-message/CustomMessageTypes.h"
+#include "soh/Enhancements/randomizer/SeedContext.h"
+#include "soh/ShipInit.hpp"
+#include "soh/cvar_prefixes.h"
 
 extern "C" {
 #include "variables.h"
@@ -26,7 +32,10 @@ void BuildSkulltulaMessage(uint16_t* textId, bool* loadFromMessageTable) {
         msg = msg + "\x0E\x3C";
     }
     int16_t gsCount = gSaveContext.inventory.gsTokens;
-    msg.InsertNumber(gsCount);
+    if (IS_RANDO && RAND_GET_OPTION(RSK_SHUFFLE_TOKENS)) {
+        gsCount += 1;
+    }
+    msg.InsertNumber(static_cast<uint8_t>(gsCount));
     msg.AutoFormat(ITEM_SKULL_TOKEN);
     msg.LoadIntoFont();
     *loadFromMessageTable = false;

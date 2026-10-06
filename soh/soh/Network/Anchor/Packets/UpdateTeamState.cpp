@@ -1,12 +1,12 @@
 #include "soh/Network/Anchor/Anchor.h"
 #include "soh/Network/Anchor/JsonConversions.hpp"
 #include <nlohmann/json.hpp>
-#include <libultraship/libultraship.h>
 #include "soh/OTRGlobals.h"
 #include "soh/Notification/Notification.h"
 #include "soh/Enhancements/randomizer/randomizer.h"
 
 extern "C" {
+#include "macros.h"
 #include "variables.h"
 extern PlayState* gPlayState;
 }
@@ -162,7 +162,7 @@ void Anchor::HandlePacket_UpdateTeamState(nlohmann::json payload) {
 
             if (i == SCENE_GANONS_TOWER_COLLAPSE_EXTERIOR) {
                 // Keep collapse timer flag
-                u32 mask = (1 << 0x36);
+                u32 mask = (1 << 0x17);
                 loadedData.sceneFlags[i].swch =
                     (loadedData.sceneFlags[i].swch & ~mask) | (gSaveContext.sceneFlags[i].swch & mask);
             }
@@ -199,6 +199,11 @@ void Anchor::HandlePacket_UpdateTeamState(nlohmann::json payload) {
 
         gSaveContext.ship.stats.firstInput = loadedData.ship.stats.firstInput;
         gSaveContext.ship.stats.fileCreatedAt = loadedData.ship.stats.fileCreatedAt;
+
+        // Ensure ganon barrier state matches trials
+        if (gSaveContext.eventChkInf[10] & 0x2000 && gSaveContext.eventChkInf[11] & 0xFC00) {
+            gSaveContext.eventChkInf[12] |= 0x8;
+        }
 
         // Restore master sword state
         // Disabling this for now, not really sure I understand why I did this in the past

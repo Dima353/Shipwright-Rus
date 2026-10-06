@@ -6,12 +6,8 @@
 #include "z64item.h"
 #include "SeedContext.h"
 #include <soh/Enhancements/randomizer/randomizerTypes.h>
-#include "soh/Enhancements/randomizer/randomizer_check_objects.h"
-#include "soh/Enhancements/randomizer/randomizer_check_tracker.h"
-#include "soh/Enhancements/randomizer/tricks.h"
 #include <soh/Enhancements/custom-message/CustomMessageManager.h>
 #include "soh/Enhancements/item-tables/ItemTableTypes.h"
-#include "../custom-message/CustomMessageTypes.h"
 
 #define MAX_SEED_STRING_SIZE 1024
 
@@ -24,11 +20,15 @@ class Randomizer {
     ~Randomizer();
     bool SpoilerFileExists(const char* spoilerFileName);
     bool IsTrialRequired(s32 trialFlag);
+    static s8 SilverTotal(RandomizerGet rg);
+    static s8* SilverFieldFromSaveContext(SaveContext* saveContext, RandomizerGet rg);
     u8 GetRandoSettingValue(RandomizerSettingKey randoSettingKey);
+    u8 GetTriforcePiecesRequired();
     RandomizerCheck GetCheckFromRandomizerInf(RandomizerInf randomizerInf);
     RandomizerInf GetRandomizerInfFromCheck(RandomizerCheck rc);
     Rando::Location* GetCheckObjectFromActor(s16 actorId, s16 sceneNum, s32 actorParams);
     ShopItemIdentity IdentifyShopItem(s32 sceneNum, u8 slotIndex);
+    CheckIdentity IdentifySilver(s32 sceneNum, Vec3f pos);
     GetItemEntry GetItemFromKnownCheck(RandomizerCheck randomizerCheck, GetItemID ogItemId,
                                        bool checkObtainability = true);
     GetItemEntry GetItemFromActor(s16 actorId, s16 sceneNum, s16 actorParams, GetItemID ogItemId,
@@ -43,7 +43,8 @@ extern "C" {
 #endif
 
 bool GenerateRandomizer(std::string seed = "");
-void JoinRandoGenerationThread();
+bool IsRandoGenerating();
+void WaitForRandoGeneration();
 
 #ifdef __cplusplus
 }

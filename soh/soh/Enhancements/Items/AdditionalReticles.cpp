@@ -1,11 +1,15 @@
+#include <libultraship/bridge/consolevariablebridge.h>
+
 #include "soh/Enhancements/game-interactor/GameInteractor.h"
 #include "soh/ShipInit.hpp"
 
 extern "C" {
-extern PlayState* gPlayState;
-extern SaveContext gSaveContext;
+#include "z64.h"
+#include "z64save.h"
 #include "macros.h"
 #include "functions.h"
+extern PlayState* gPlayState;
+extern SaveContext gSaveContext;
 }
 
 #define CVAR_BOW_RETICLE_NAME CVAR_ENHANCEMENT("BowReticle")
@@ -43,7 +47,6 @@ void RegisterAdditionalReticles() {
              player->heldItemAction == PLAYER_IA_SLINGSHOT)) {
             if (heldActor != NULL) {
                 MtxF sp44;
-                s32 pad;
 
                 Matrix_RotateZYX(0, -15216, -17496, MTXMODE_APPLY);
                 Matrix_Get(&sp44);

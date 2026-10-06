@@ -1,12 +1,13 @@
 #include <string.h>
 #include "global.h"
 #include "vt.h"
-#include "libultraship/bridge.h"
+#include <libultraship/bridge/resourcebridge.h>
 #include "soh/Enhancements/game-interactor/GameInteractor.h"
 #include "soh/Enhancements/game-interactor/GameInteractor_Hooks.h"
 #include "soh/ResourceManagerHelpers.h"
 
 #include "message_data_static.h"
+#include <libultraship/bridge/consolevariablebridge.h>
 extern MessageTableEntry* sNesMessageEntryTablePtr;
 extern MessageTableEntry* sGerMessageEntryTablePtr;
 extern MessageTableEntry* sFraMessageEntryTablePtr;
@@ -465,7 +466,7 @@ void GameState_Init(GameState* gameState, GameStateFunc init, GraphicsContext* g
 void GameState_Destroy(GameState* gameState) {
     osSyncPrintf("game デストラクタ開始\n"); // "game destructor start"
     func_800C3C20();
-    func_800F3054();
+    Audio_Update();
     osRecvMesg(&gameState->gfxCtx->queue, NULL, OS_MESG_BLOCK);
     LOG_CHECK_NULL_POINTER("this->cleanup", gameState->destroy);
     if (gameState->destroy != NULL) {

@@ -1,9 +1,13 @@
+#include <libultraship/bridge/consolevariablebridge.h>
+
 #include "soh/ObjectExtension/ObjectExtension.h"
+#include "soh/Enhancements/game-interactor/GameInteractor.h"
 #include "item_category_adj.h"
 #include "particle_cmc.h"
-#include "soh/frame_interpolation.h"
+#include "soh/OTRGlobals.h"
 #include "soh/Enhancements/randomizer/randomizer.h"
 #include "soh/Enhancements/randomizer/RCToRandInf.h"
+#include "soh/ShipInit.hpp"
 
 extern "C" {
 #include "functions.h"
@@ -49,7 +53,7 @@ extern "C" void DrawItemHalo(Actor* icicleActor) {
     // Rotate and draw halo with CMC colors
     Matrix_Translate(icicleActor->world.pos.x + xOffset, icicleActor->world.pos.y + yOffset,
                      icicleActor->world.pos.z + zOffset, MTXMODE_NEW);
-    Matrix_RotateZ(-M_PI / 2, MTXMODE_APPLY);
+    Matrix_RotateZ(static_cast<f32>(-M_PI / 2), MTXMODE_APPLY);
     Matrix_Scale(0.01f, 0.01f, 0.01f, MTXMODE_APPLY);
     OPEN_DISPS(gPlayState->state.gfxCtx);
     gSPMatrix(POLY_OPA_DISP++, MATRIX_NEWMTX(gPlayState->state.gfxCtx), G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
@@ -103,13 +107,7 @@ static CheckIdentity IdentifyIcicle(s32 sceneNum, s32 posX, s32 posZ) {
     Rando::Location* location =
         OTRGlobals::Instance->gRandomizer->GetCheckObjectFromActor(ACTOR_BG_ICE_TURARA, icicleSceneNum, actorParams);
 
-    if (location->GetRandomizerCheck() == RC_UNKNOWN_CHECK) {
-        LUSLOG_WARN("IdentifyIcicle did not receive a valid RC value (%d).", location->GetRandomizerCheck());
-        assert(false);
-    } else {
-        icicleIdentity.randomizerInf = rcToRandomizerInf[location->GetRandomizerCheck()];
-        icicleIdentity.randomizerCheck = location->GetRandomizerCheck();
-    }
+    IdentifyCheck(&icicleIdentity, location);
 
     return icicleIdentity;
 }

@@ -1,5 +1,6 @@
+#include <libultraship/bridge/consolevariablebridge.h>
+
 #include "nametag.h"
-#include <libultraship/bridge.h>
 #include <vector>
 #include <algorithm>
 #include "soh/frame_interpolation.h"
@@ -12,7 +13,6 @@ extern "C" {
 #include "macros.h"
 #include "soh/cvar_prefixes.h"
 #include "functions.h"
-#include "variables.h"
 #include "textures/message_static/message_static.h"
 extern PlayState* gPlayState;
 }
